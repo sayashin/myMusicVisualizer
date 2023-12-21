@@ -92,7 +92,7 @@ function DancingFire() {
       emit2.pos.y += 10;
       emit3.pos.y += 10;
       emit3.size = s * 2;
-      if (frameCount % 5 == 0 && energyB > 180) {
+      if (frameCount % 4 == 0 && energyB > 180) {
         emit.pos.y -= 100;
         emit2.pos.y -= 60;
         emit3.pos.y -= 60;

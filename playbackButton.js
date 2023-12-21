@@ -29,7 +29,7 @@ function PlaybackButton() {
       this.y = 20;
     }
 
-    text("Press any key to show-hide Menu", this.x + 70, this.y + 10);
+    text("Press space to show-hide Menu", this.x + 70, this.y + 10);
 
     if (this.playing) {
       rect(this.x, this.y, this.width / 2 - 2, this.height);

@@ -111,4 +111,3 @@ if (vis.selectedVisual.name == "waveandstars") {
       }
     }
   };
-}

@@ -66,10 +66,11 @@ function setup() {
   gui.addGlobals("cirSize");
   
   fileInput = createFileInput(handleFile);
-  fileInput.position(500, 120 + 5 * 40); // Position below the song list
+  fileInput.position(500, 120 + 6 * 40); // positioned further down
+  fileInput.hide(); // hide it until 'F' is pressed
   fileInput.style('color', 'white');
   fileInput.style('font-size', '16px');
-  fileInput.style('width', '300px');
+  fileInput.style('width', '300px'); 
 }
 
 function draw() {
@@ -133,6 +134,10 @@ function handleFile(file) {
 
     loadSound(file.data, s => {
       sound = s;
+
+      //Set a consistent volume level (e.g., 0.6)
+      sound.setVolume(0.6);
+
       customFileLoaded = true;
       sound.play();
     }, () => {

@@ -8,31 +8,48 @@ function ControlsAndInput() {
 
   //make the window fullscreen or revert to windowed
   this.mousePressed = function () {
-    if (
-      !this.playbackButton.hitCheck() &&
-      vis.selectedVisual.name != "noisyworm"
-    ) {
-      var fs = fullscreen();
-      fullscreen(!fs);
-    }
-  };
+  const clickedElement = document.activeElement;
+
+  // Avoid fullscreen toggle if clicking on file input or playback button
+  const clickedFileInput = clickedElement === fileInput.elt;
+  const clickedPlayback = this.playbackButton.hitCheck();
+
+  if (!clickedFileInput && !clickedPlayback && vis.selectedVisual.name != "noisyworm") {
+    var fs = fullscreen();
+    fullscreen(!fs);
+  }
+};
 
   //responds to keyboard presses
   //@param keycode the ascii code of the keypressed
   this.keyPressed = function (keycode) {
-    if (keycode == 32) {
-      this.menuDisplayed = !this.menuDisplayed;
-    }
+  // Toggle menu with spacebar
+  if (keycode == 32) {
+    this.menuDisplayed = !this.menuDisplayed;
 
-    if (keycode > 48 && keycode < 58) {
-      var visNumber = keycode - 49;
-      vis.selectVisual(vis.visuals[visNumber].name);
+    // Hide file input if menu is hidden
+    if (!this.menuDisplayed && fileInput) {
+      fileInput.hide();
     }
+  }
 
-    if (this.playbackButton) {
-      this.playbackButton.keyPressed(); // Call the keyPressed function of PlaybackButton
+  // 1–9 = change visualisation
+  if (keycode > 48 && keycode < 58) {
+    var visNumber = keycode - 49;
+    vis.selectVisual(vis.visuals[visNumber].name);
+  }
+
+  // F = show file input (custom song)
+  if (keycode == 70) {
+    if (this.menuDisplayed && fileInput) {
+      fileInput.show();
     }
-  };
+  }
+
+  if (this.playbackButton) {
+    this.playbackButton.keyPressed();
+  }
+};
 
   //draws the playback button and potentially the menu
   this.draw = function () {
@@ -76,27 +93,38 @@ function ControlsAndInput() {
         text(i + 1 + ":  " + vis.visuals[i].name, 100, yLoc);
       }
 
-      //draw the menu songs
-      var songLabels = ["A", "B", "C", "D", "E"];
-      for (var j = 0; j < songLabels.length; j++) {
-        var songLabel = songLabels[j];
-        var songName = window["song" + songLabel];
-        // Get the substring after the assets/
-        var songDisplayName = songName.substring(songName.lastIndexOf("/") + 1);
-        //remove song file extension
-        songDisplayName = songDisplayName.replace(".mp3", "");
-        songDisplayName = songDisplayName.replace(".wav", "");
+  //draw the menu songs
+  var songLabels = ["A", "B", "C", "D", "E"];
+  for (var j = 0; j < songLabels.length; j++) {
+  var songLabel = songLabels[j];
+  var songName = window["song" + songLabel];
+  var songDisplayName = songName.substring(songName.lastIndexOf("/") + 1);
+  songDisplayName = songDisplayName.replace(".mp3", "");
+  songDisplayName = songDisplayName.replace(".wav", "");
 
-        if (vis.selectedVisual.name == "waveandstars") {
-          text(
-            songLabel + ": " + songDisplayName,
-            500 - width / 2,
-            120 + j * 40 - height / 2
-          );
-        } else {
-          text(songLabel + ": " + songDisplayName, 500, 120 + j * 40);
-        }
+  if (vis.selectedVisual.name == "waveandstars") {
+    text(
+      songLabel + ": " + songDisplayName,
+      500 - width / 2,
+      120 + j * 40 - height / 2
+    );
+  } else {
+    text(songLabel + ": " + songDisplayName, 500, 120 + j * 40);
+  }
+}
+
+// Add option F for custom song
+var customLabel = "F";
+var customText = "Custom song (upload)";
+if (vis.selectedVisual.name == "waveandstars") {
+  text(
+    customLabel + ": " + customText,
+    500 - width / 2,
+    120 + songLabels.length * 40 - height / 2
+  );
+} else {
+  text(customLabel + ": " + customText, 500, 120 + songLabels.length * 40);
+}
       }
     }
   };
-}

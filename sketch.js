@@ -13,6 +13,9 @@ var stepNoise;
 var progThresh;
 var seedThresh;
 
+let fileInput;
+let customFileLoaded = false;
+
 // Global variables for the songs
 var songA = "assets/Stomper reggae bit.mp3";
 var songB = "assets/Til the money runs out - Tom Waits.mp3";
@@ -61,6 +64,13 @@ function setup() {
   gui.addGlobals("seedThresh");
   sliderRange(0.1, 5, 0.1);
   gui.addGlobals("cirSize");
+  
+  fileInput = createFileInput(handleFile);
+  fileInput.position(500, 120 + 6 * 40); // positioned further down
+  fileInput.hide(); // hide it until 'F' is pressed
+  fileInput.style('color', 'white');
+  fileInput.style('font-size', '16px');
+  fileInput.style('width', '300px'); 
 }
 
 function draw() {
@@ -113,5 +123,27 @@ function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
   if (vis.selectedVisual.hasOwnProperty("onResize")) {
     vis.selectedVisual.onResize();
+  }
+}
+
+function handleFile(file) {
+  if (file.type === 'audio') {
+    if (sound && sound.isPlaying()) {
+      sound.stop();
+    }
+
+    loadSound(file.data, s => {
+      sound = s;
+
+      //Set a consistent volume level (e.g., 0.6)
+      sound.setVolume(0.6);
+
+      customFileLoaded = true;
+      sound.play();
+    }, () => {
+      console.error("Failed to load custom audio file.");
+    });
+  } else {
+    console.warn("Not an audio file.");
   }
 }
